@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Task
 from .forms import TaskForm
+
 
 def index(request):
     tasks= Task.objects.all()
@@ -14,3 +15,14 @@ def index(request):
 
     context = {'tasks': tasks, 'form': form}
     return render(request, 'todolist/index.html', context)
+
+def deleteTask(request, pk):
+    task = Task.objects.get(id=pk)
+    task.delete()
+    return redirect('/')
+
+def completeTask(request, pk):
+    task = Task.objects.get(id=pk)
+    task.completed = not task.completed
+    task.save()
+    return redirect('/')

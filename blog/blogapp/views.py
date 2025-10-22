@@ -1,9 +1,10 @@
+from django.views.generic import ListView, DetailView, CreateView
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Post, Comment
-from .forms import PostForm, CommmentForm
+from .forms import PostForm, CommentForm
 
 class PostListView(ListView):
     model = Post
@@ -17,12 +18,12 @@ class PostDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = CommmentForm()
+        context['form'] = CommentForm()
         return context
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        form = CommmentForm(request.POST)
+        form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.post = self.object

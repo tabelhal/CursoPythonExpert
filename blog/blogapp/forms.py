@@ -6,7 +6,7 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['title', 'body']
 
-class CommmentForm(forms.ModelForm):
+class CommentForm(forms.ModelForm):  # ✅ Fixed name
     class Meta:
         model = Comment
         fields = ['text']

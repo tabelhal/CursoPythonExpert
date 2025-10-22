@@ -1,0 +1,11 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+    <a href="{% url 'post_create' %}">Criar novo post</a>
+    <ul>
+        {% for post in posts %}
+            <li>
+                <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a> por {{ post.autor.username }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

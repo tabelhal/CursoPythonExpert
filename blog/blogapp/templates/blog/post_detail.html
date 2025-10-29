@@ -11,10 +11,10 @@
   {% empty %}
     <p>Sem comentários ainda.</p>
   {% endfor %}
-  {% if.user.is_authenticated %}
+  {% if user.is_authenticated %}
     <h4>Adicionar comentário</h4>
     <form method="post">
-      {% crsf_token %}
+      {% csrf_token %}
       {{ form.as_p }}
       <button type="submit">Comentar</button>
     </form>

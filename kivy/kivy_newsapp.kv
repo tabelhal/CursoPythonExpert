@@ -1,0 +1,52 @@
+#: kivy 1.0.9
+<Gerenciador>
+    TelaPrincipal:
+    TelaDetalhes:
+
+<TelaPrincipal>
+    name: 'principal'
+    lista: lista_noticias
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Notícias'
+            size_hint_y: None
+            height: '40dp'
+            font-size: '20sp'
+        ListaNoticias:
+            id: lista_noticias
+
+<TelaDetalhes>
+    name: 'detalhes'
+    titulo: titulo_detalhes
+    descricao: descricao_detalhes
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Notícias'
+            size_hint_y: None
+            height: '40dp'
+            font-size: '20sp'
+        ListaNoticias:
+            id: lista_noticias
+            text: 'Titulo'
+            font-size: '20sp'
+            size_hint_y: None
+            height: '40dp'
+        Label:
+            id: descricao_detalhes
+            text: 'Descrição completa do artigo'
+        Button:
+            text: 'Voltar'
+            size_hint_y: None
+            height: '40dp'
+            on_release:
+                root.manager.current = 'principal'
+<ListaNoticias>
+    viewclass: 'Button'
+    RecycleBoxLayout:
+        default_size: None, dp(80)
+        default_size_hint: 1, None
+        size_hint_y: None
+        height: self.minimum_height
+        orientation: 'vertical'

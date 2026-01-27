@@ -5,11 +5,12 @@ from PyQt5.QtWidgets import (
 
 app = QApplication(sys.argv)
 window = QWidget()
-window.setWindowTitle('Hello World!')
+window.setWindowTitle('Start Menu')
+window.setGeometry(600, 300, 600, 600)
 
 layout = QVBoxLayout()
 text_entry = QLineEdit()
-button = QPushButton("Dizer olá!")
+button = QPushButton('Dizer olá!')
 label = QLabel('')
 layout.addWidget(text_entry)
 layout.addWidget(button)

@@ -6,7 +6,8 @@ tickers = {
     "AAPL": "Apple",
     "MSFT": "Microsoft",
     "META": "Meta",
-    "AMZN": "Amazon"
+    "AMZN": "Amazon",
+    "IBM": "IBM",
 }
 
 eurusd = yf.Ticker("EURUSD=X").info.get("regularMarketPrice")

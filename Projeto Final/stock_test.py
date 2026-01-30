@@ -2,7 +2,7 @@
 import yfinance as yf
 
 tickers = {
-    "GOOGL": "Google",
+    "GOOGL": "Aplhabet Inc.",
     "AAPL": "Apple",
     "MSFT": "Microsoft",
     "META": "Meta",

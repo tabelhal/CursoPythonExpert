@@ -2,7 +2,7 @@ import feedparser
 from datetime import datetime
 
 RSS_FEEDS = [
-    "https://www.rtp.pt/noticias/rss",  # RTP Últimas notícias
+    "https://www.rtp.pt/noticias/rss",
 ]
 
 
@@ -40,7 +40,7 @@ def fetch_all_news():
 
     print(f"Total news fetched: {len(all_entries)}\n")
 
-    for i, entry in enumerate(all_entries[:10], 1):
+    for i, entry in enumerate(all_entries[:15], 1):
         print(f"{i}. {entry['title']}")
         print(f"   Published: {entry['published']}")
         print(f"   Topics: {entry['topics']}")

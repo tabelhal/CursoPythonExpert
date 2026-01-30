@@ -1,8 +1,13 @@
 import sys
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QLabel, QScrollArea,
-    QFrame, QPushButton, QLineEdit, QDialog
+    QApplication, QWidget, QVBoxLayout, QLabel, QScrollArea, QHBoxLayout, QFrame, QPushButton, QLineEdit, QDialog
 )
+import feedparser
+from datetime import datetime
+
+RSS_FEEDS = [
+    "https://www.rtp.pt/noticias/rss",
+]
 
 class StartDialog(QDialog):
     def __init__(self):
@@ -28,7 +33,7 @@ class MainWindow(QWidget):
     def __init__(self, user_name):
         super().__init__()
         self.setWindowTitle('Start Menu')
-        self.setGeometry(500, 250, 750, 650)
+        self.setGeometry(500, 250, 950, 650)
 
         layout = QVBoxLayout()
 
@@ -49,25 +54,62 @@ class MainWindow(QWidget):
         label = QLabel('')
         layout.addWidget(label)
 
-        news_label = QLabel('Notícias')
+        def news():
+            all_entries = []
+
+            for url in RSS_FEEDS:
+                feed = feedparser.parse(url)
+                for entry in feed.entries:
+                    title = getattr(entry, "title", "Sem título")
+                    description = getattr(entry, "summary", "Sem descrição")
+                    published = getattr(entry, "published", "Sem data")
+
+                    try:
+                        if hasattr(entry, "published_parsed") and entry.published_parsed:
+                            published = datetime(*entry.published_parsed[:6]).strftime("%Y-%m-%d %H:%M")
+                    except Exception:
+                        pass
+
+                    all_entries.append({
+                        "title": title,
+                        "description": description,
+                        "published": published,
+                    })
+
+            all_entries.sort(key=lambda x: x["published"], reverse=True)
+
+            return all_entries
+
+
+        news_label = QLabel("Notícias - RTP Notícias")
         layout.addWidget(news_label)
 
         news_scroll = QScrollArea()
         news_scroll.setWidgetResizable(True)
+
         news_content = QWidget()
         news_content_layout = QVBoxLayout(news_content)
 
-        for i in range(10):
+        entries = news()
+
+        for entry in entries[:15]:
             box = QFrame()
             box.setFrameShape(QFrame.Box)
+
             box_layout = QVBoxLayout(box)
-            title_news_label = QLabel(f"Title #{i+1}")
+
+            title_news_label = QLabel(entry["title"])
+            title_news_label.setStyleSheet("font-size: 18px; font-weight: bold;")
             box_layout.addWidget(title_news_label)
-            title_news_label.setStyleSheet("font-size: 20px; font-weight: bold;")
-            small_news_label = QLabel("{Source} | {Date}")
-            box_layout.addWidget(small_news_label)
-            small_news_label.setStyleSheet("font-size: 12px;")
-            box_layout.addWidget(QLabel("{Description}"))
+
+            date_news_label = QLabel(entry["published"])
+            date_news_label.setStyleSheet("font-size: 12px;")
+            box_layout.addWidget(date_news_label)
+
+            description_label = QLabel(entry["description"])
+            description_label.setWordWrap(True)
+            box_layout.addWidget(description_label)
+
             news_content_layout.addWidget(box)
 
         news_scroll.setWidget(news_content)
@@ -85,13 +127,42 @@ class MainWindow(QWidget):
         stock_content = QWidget()
         stock_content_layout = QVBoxLayout(stock_content)
 
+        from PyQt5.QtCore import Qt
+
         for i in range(10):
             box = QFrame()
             box.setFrameShape(QFrame.Box)
-            box_layout = QVBoxLayout(box)
-            box_layout.addWidget(QLabel(f"Title #{i+1}"))
-            box_layout.addWidget(QLabel("From {Source}, {Date}"))
-            box_layout.addWidget(QLabel("{Description}"))
+
+            box_layout = QHBoxLayout(box)
+
+            # LEFT COLUMN
+            left_layout = QVBoxLayout()
+            ticker_symbol_label = QLabel('{Ticker symbol}')
+            ticker_symbol_label.setStyleSheet("font-size: 20px; font-weight: bold;")
+            left_layout.addWidget(ticker_symbol_label)
+
+            company_name_label = QLabel('{Company Name}')
+            company_name_label.setStyleSheet("font-size: 15px;")
+            left_layout.addWidget(company_name_label)
+
+            # RIGHT COLUMN
+            right_layout = QVBoxLayout()
+            share_price_label = QLabel('{XXX.XX}€')
+            share_price_label.setStyleSheet("font-size: 20px; font-weight: bold;")
+            share_price_label.setAlignment(Qt.AlignRight)
+            right_layout.addWidget(share_price_label)
+
+            share_percentage_label = QLabel('-/+ {XX.XX}%')
+            share_percentage_label.setAlignment(Qt.AlignRight)
+            right_layout.addWidget(share_percentage_label)
+
+            # Assemble
+            box_layout.addLayout(left_layout)
+            box_layout.addLayout(right_layout)
+
+            box_layout.setStretch(0, 3)
+            box_layout.setStretch(1, 1)
+
             stock_content_layout.addWidget(box)
 
         stock_scroll.setWidget(stock_content)

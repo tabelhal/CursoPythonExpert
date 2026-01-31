@@ -2,12 +2,16 @@
 import yfinance as yf
 
 tickers = {
-    "GOOGL": "Aplhabet Inc.",
-    "AAPL": "Apple",
-    "MSFT": "Microsoft",
-    "META": "Meta",
-    "AMZN": "Amazon",
-    "IBM": "IBM",
+    "GOOGL": "Alphabet Inc.",
+    "AAPL": "Apple Inc.",
+    "MSFT": "Microsoft Corporation",
+    "META": "Meta Platforms, Inc.",
+    "AMZN": "Amazon.com, Inc.",
+    "IBM": "International Business Machines Corporation",
+    "TSLA": "Tesla, Inc.",
+    "NVDA": "NVIDIA Corporation",
+    "NFLX": "Netflix, Inc.",
+    "DIS": "The Walt Disney Company"
 }
 
 eurusd = yf.Ticker("EURUSD=X").info.get("regularMarketPrice")

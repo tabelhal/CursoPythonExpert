@@ -2,12 +2,10 @@ import sys
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QLabel, QScrollArea, QHBoxLayout, QFrame, QPushButton, QLineEdit, QDialog
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 import feedparser
 import yfinance as yf
 from datetime import datetime
-import python_weather
-import asyncio
 
 RSS_FEEDS = [
     "https://www.rtp.pt/noticias/rss",
@@ -39,7 +37,7 @@ class StartDialog(QDialog):
         layout.addWidget(self.name_input)
 
         button = QPushButton("Continue")
-        button.clicked.connect(self.accept)  # closes dialog
+        button.clicked.connect(self.accept)
         layout.addWidget(button)
 
     def get_name(self):
@@ -54,9 +52,54 @@ class MainWindow(QWidget):
 
         layout = QVBoxLayout()
 
-        label = QLabel(f'Bem-vindo de volta, {user_name}!')
-        label.setStyleSheet("font-size: 35px;")
-        layout.addWidget(label)
+        top_layout = QHBoxLayout()
+
+        welcome_label = QLabel(f'Bem-vindo de volta, {user_name}!')
+        welcome_label.setStyleSheet("font-size: 35px;")
+        top_layout.addWidget(welcome_label, alignment=Qt.AlignLeft)
+
+        clock_layout = QVBoxLayout()
+
+        clock_label = QLabel()
+        clock_label.setStyleSheet("font-size: 50px; font-weight: bold;")
+        clock_label.setAlignment(Qt.AlignRight)
+
+        date_label = QLabel()
+        date_label.setStyleSheet("font-size: 15px;")
+        date_label.setAlignment(Qt.AlignRight)
+
+        clock_layout.addWidget(clock_label)
+        clock_layout.addWidget(date_label)
+
+        top_layout.addLayout(clock_layout)
+        layout.addLayout(top_layout)
+
+        weekdays_pt = [
+            "Segunda-feira",
+            "Terça-feira",
+            "Quarta-feira",
+            "Quinta-feira",
+            "Sexta-feira",
+            "Sábado",
+            "Domingo"
+        ]
+
+        months_pt = [
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        ]
+
+        def update():
+            now = datetime.now()
+            clock_label.setText(now.strftime("%H:%M"))
+            weekday = weekdays_pt[now.weekday()]
+            month_name = months_pt[now.month - 1]
+            date_label.setText(f"{weekday}\n{now.day} de {month_name} de {now.year}")
+
+        timer = QTimer(self)
+        timer.timeout.connect(update)
+        timer.start(1000)
+        update()
 
         label = QLabel('')
         layout.addWidget(label)
@@ -94,9 +137,7 @@ class MainWindow(QWidget):
                     })
 
             all_entries.sort(key=lambda x: x["published"], reverse=True)
-
             return all_entries
-
 
         news_label = QLabel("Notícias - RTP Notícias")
         layout.addWidget(news_label)
@@ -188,9 +229,6 @@ class MainWindow(QWidget):
             box_layout.addLayout(left_layout)
             box_layout.addLayout(right_layout)
 
-            box_layout.addLayout(left_layout)
-            box_layout.addLayout(right_layout)
-
             box_layout.setStretch(0, 3)
             box_layout.setStretch(1, 1)
 
@@ -206,7 +244,7 @@ app = QApplication(sys.argv)
 
 dialog = StartDialog()
 if dialog.exec_() == QDialog.Accepted:
-    user_name = dialog.get_name() or "Usuário"
+    user_name = dialog.get_name() or "Usuário Anónimo"
     main_window = MainWindow(user_name)
     main_window.show()
     sys.exit(app.exec_())

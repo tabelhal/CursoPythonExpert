@@ -33,7 +33,8 @@ def fetch_all_news():
                 "title": title,
                 "description": description,
                 "published": published,
-                "topics": categories_str
+                "topics": categories_str,
+                "link": link
             })
 
     all_entries.sort(key=lambda x: x["published"], reverse=True)
@@ -45,6 +46,7 @@ def fetch_all_news():
         print(f"   Published: {entry['published']}")
         print(f"   Topics: {entry['topics']}")
         print(f"   Description: {entry['description']}\n")
+        print(f"Link: {link}")
         print("-" * 150)
 
 

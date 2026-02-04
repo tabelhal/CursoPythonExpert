@@ -6,10 +6,26 @@ from PyQt5.QtCore import Qt, QTimer
 import feedparser
 import yfinance as yf
 from datetime import datetime
+import requests
+import geocoder
 
 RSS_FEEDS = [
     "https://www.rtp.pt/noticias/rss",
 ]
+
+API_KEY = "b7256228f73ed0b4b063df5a01f3efa7"
+
+g = geocoder.ip('me')
+
+lat, lon = g.latlng
+
+url = (
+    f"https://api.openweathermap.org/data/2.5/weather?"
+    f"lat={lat}&lon={lon}&appid={API_KEY}&units=metric&lang=pt_br"
+)
+
+response = requests.get(url)
+dados = response.json()
 
 tickers = {
     "GOOGL": "Alphabet Inc.",
@@ -104,12 +120,21 @@ class MainWindow(QWidget):
         label = QLabel('')
         layout.addWidget(label)
 
+
         weather_label = QLabel('Tempo')
         layout.addWidget(weather_label)
 
-        full_weather_label = QLabel()
-        layout.addWidget(full_weather_label)
-        full_weather_label.setStyleSheet('font-size: 22px')
+        if response.status_code == 200:
+            temperatura = dados["main"]["temp"]
+            temperatura = round(temperatura)
+            condicao = dados["weather"][0]["description"]
+            full_weather_label = QLabel(f'Estão {temperatura}ºC e {condicao} em Lisboa')
+            layout.addWidget(full_weather_label)
+            full_weather_label.setStyleSheet('font-size: 22px')
+        else:
+            full_weather_label = QLabel('Erro a buscar o tempo. Tente novamente')
+            layout.addWidget(full_weather_label)
+            full_weather_label.setStyleSheet('font-size: 22px')
 
         label = QLabel('')
         layout.addWidget(label)
@@ -123,6 +148,7 @@ class MainWindow(QWidget):
                     title = getattr(entry, "title", "Sem título")
                     description = getattr(entry, "summary", "Sem descrição")
                     published = getattr(entry, "published", "Sem data")
+                    link = getattr(entry, "link", "Sem link")
 
                     try:
                         if hasattr(entry, "published_parsed") and entry.published_parsed:
@@ -134,6 +160,7 @@ class MainWindow(QWidget):
                         "title": title,
                         "description": description,
                         "published": published,
+                        "link": link
                     })
 
             all_entries.sort(key=lambda x: x["published"], reverse=True)
@@ -167,6 +194,12 @@ class MainWindow(QWidget):
             description_label = QLabel(entry["description"])
             description_label.setWordWrap(True)
             box_layout.addWidget(description_label)
+
+            link_label = QLabel(f"<a href='{entry['link']}'>{entry['link']}</a>")
+            link_label.setOpenExternalLinks(True)
+            link_label.setWordWrap(True)
+
+            box_layout.addWidget(link_label)
 
             news_content_layout.addWidget(box)
 

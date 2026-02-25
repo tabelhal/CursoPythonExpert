@@ -11,6 +11,7 @@ import geocoder
 
 RSS_FEEDS = [
     "https://www.rtp.pt/noticias/rss",
+    "https://rss.impresa.pt/feed/latest/expresso.rss?type=ARTICLE,VIDEO,STREAM,PLAYLIST,EVENT&limit=20&pubsubhub=true"
 ]
 
 API_KEY = "b7256228f73ed0b4b063df5a01f3efa7"

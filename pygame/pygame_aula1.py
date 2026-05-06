@@ -1,19 +1,34 @@
-import pygame
-import random
+import pygame, math, os, random
 
 pygame.init()
-tela = pygame.display.set_mode((640, 480))
-pygame.display.set_caption('EPIC 67 Game')
+W, H = 800, 600
+win = pygame.display.set_mode((W, H))
+clock = pygame.time.Clock()
+font = pygame.font.SysFont(None, 32)
+pygame.display.set_caption('Asteriords Game')
+
+HIGHSCORE_FILE = 'highscore.txt'
+if os.path.exists(HIGHSCORE_FILE):
+    with open(HIGHSCORE_FILE, 'r') as f:
+        highscore = int(f.read())
+else:
+    highscore = 0
+
+player_pos = [W//2, H//2]
+player_speed = 5
+player_lives = 3
 
 fundo = (0, 0, 0)
 running = True
 
 x = 250
 y = 250
-vel = 0.5
+vel = 0.10
 r = 0
 b = 0
 g = 250
+
+
 
 while running:
     for evento in pygame.event.get():
@@ -30,22 +45,18 @@ while running:
         y -= vel
     if keys[pygame.K_DOWN]:
         y += vel
-    if keys[pygame.K_SPACE]:
-        r = random.randint(0, 250)
-        b = random.randint(0, 250)
-        g = random.randint(0, 250)
 
-    if x >= 640 - 67:
-        x = 640 - 67
-    if y >= 480 - 67:
-        y = 480 - 67
 
-    if x <= 67:
-        x = 67
-    if y <= 67:
-        y = 67
-    tela.fill(fundo)
-    pygame.draw.circle(tela, (r, g, b), (x, y), 67)
+    if x >= 640 - 15:
+        x = 640 - 15
+    if y >= 480 - 15:
+        y = 480 - 15
+
+    if x <= 15:
+        x = 15
+    if y <= 15:
+        y = 15
+    pygame.draw.circle((r, g, b), (x, y), 15)
     pygame.display.flip()
 
 pygame.quit()
